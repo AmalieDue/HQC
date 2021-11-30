@@ -6,6 +6,7 @@
 from sage.all import *
 import time
 import pickle
+import RS.py
 
 current_time = time.strftime("%m.%d.%y %H:%M:%S", time.localtime())
 output_name = 'test %s.pkl' % (current_time)
