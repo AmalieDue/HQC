@@ -3,7 +3,7 @@
 
 # In[36]:
 
-
+from sage.all import *
 get_ipython().run_line_magic('run', 'HQC.ipynb')
 import pickle
 import time
