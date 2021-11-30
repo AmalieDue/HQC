@@ -5,6 +5,8 @@
 
 # In[19]:
 
+from sage.all import *
+
 
 def _DetermineInput(data, q):
     # determine data type

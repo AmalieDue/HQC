@@ -5,8 +5,10 @@
 
 # In[1]:
 
+from sage.all import *
+from Conversions import *
 
-get_ipython().run_line_magic('run', 'Conversions.ipynb')
+#get_ipython().run_line_magic('run', 'Conversions.ipynb')
 
 class RSCode:
     
