@@ -3,7 +3,7 @@
 
 # In[4]:
 
-
+from sage.all import *
 import time
 import pickle
 
