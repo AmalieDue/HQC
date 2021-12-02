@@ -23,7 +23,7 @@ class RSCode:
         
         self.tau = floor( (self.d-1) / 2 )
         
-        if shortening.parent() == ZZ:    
+        if type(shortening) == int:    
             self.n = n - shortening
             self.k = k - shortening
         else:

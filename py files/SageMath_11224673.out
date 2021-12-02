@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "/zhome/34/7/112702/Desktop/HQC/py files/simulation.py", line 31, in <module>
+    C = HQC(w = w , w_e = w , w_r = w, C = ConcatenatedCode(RSCode(n = 138, k = 16, q = 2**8), RMCode(r = 1, m = 7, q = 2)), key_type = 'pol', simulation = True)
+  File "/zhome/34/7/112702/Desktop/HQC/py files/RS.py", line 26, in __init__
+    if shortening.parent() == ZZ:    
+AttributeError: 'int' object has no attribute 'parent'
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@hpc.dtu.dk>
+Subject: Job 11224673: <SageMath> in cluster <dcc> Exited
+
+Job <SageMath> was submitted from host <n-62-30-2> by user <s160503> in cluster <dcc> at Thu Dec  2 12:17:52 2021
+Job was executed on host(s) <4*n-62-30-24>, in queue <hpc>, as user <s160503> in cluster <dcc> at Thu Dec  2 12:17:53 2021
+</zhome/34/7/112702> was used as the home directory.
+</zhome/34/7/112702/Desktop/HQC/py files> was used as the working directory.
+Started at Thu Dec  2 12:17:53 2021
+Terminated at Thu Dec  2 12:19:48 2021
+Results reported at Thu Dec  2 12:19:48 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#BSUB -J SageMath
+#BSUB -q hpc
+#BSUB -n 4
+#BSUB -R "rusage[mem=2GB]"
+#BSUB -R "span[hosts=1]"
+#BSUB -R "select[avx2]"
+#BSUB -W 2:00
+
+/appl/SageMath/9.4/sage simulation.py
+
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   2.46 sec.
+    Max Memory :                                 6 MB
+    Average Memory :                             6.00 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               8186.00 MB
+    Max Swap :                                   5 MB
+    Max Processes :                              2
+    Max Threads :                                2
+    Run time :                                   148 sec.
+    Turnaround time :                            116 sec.
+
+The output (if any) is above this job summary.
+

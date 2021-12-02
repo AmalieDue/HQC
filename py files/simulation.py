@@ -14,7 +14,7 @@ w = 61
 trials = 1000
 
 current_time = time.strftime("%m.%d.%y %H:%M:%S", time.localtime())
-output_name = 'out/concat RSRM1 w=%s %s.pkl' % (w, current_time)
+output_name = 'output files/concat RSRM1 w=%s %s.pkl' % (w, current_time)
 
 # concat_RS_RM_1 = ConcatenatedCode(RSCode(n = 138, k = 16, q = 2**8), RMCode(r = 1, m = 7, q = 2))
 
