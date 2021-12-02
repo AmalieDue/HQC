@@ -6,27 +6,25 @@
 # In[1]:
 
 
-from sage.all import *
-from ConcatenatedCode import *
-from Conversions import *
 #get_ipython().run_line_magic('run', 'ProductCode.ipynb')
 #get_ipython().run_line_magic('run', 'ConcatenatedCode.ipynb')
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
-
-
-# In[11]:
-
+from sage.all import *
+from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
+from ConcatenatedCode import *
+#from ProductCode import *
 
 class HQC:
     
-    def __init__(self, w, w_e, w_r, C, key_type = 'pol', simulate_k = False):
+    def __init__(self, w, w_e, w_r, C, key_type = 'pol', simulation = False, simulate_k = False):
         
         self.w = w
         self.w_e = w_e
         self.w_r = w_r
         self.C = C
         self.q = 2
-        self.num_ct_decoding_success = 0
+        self.ct_decoding_success = 0
+        self.simulation = simulation
         self.simulate_k = simulate_k
         
         # if neither input nor output to code C are binary, then self.n and self.k are multiplied with the
@@ -151,7 +149,7 @@ class HQC:
             r2 = self.RandomGenWithWeight(r2, self.w_r)
             r2 = self.S(r2)
             
-            decodable_error_chunk = (self.sk[0] * r2 - r1 * self.sk[1] + e).list()
+            decodable_error_chunk = (sk[0] * r2 - r1 * sk[1] + e).list()
             decodable_error.extend(decodable_error_chunk)
             
             non_decodable_error_chunk = (pk[1] * r2 + e).list()
@@ -160,20 +158,38 @@ class HQC:
             u.extend(r1 + pk[0] * r2)
             v.extend(self.S(c[i:i+self.n]) + pk[1] * r2 + e)
             
+            
         self.decodable_error_wt = decodable_error.count(1)
         self.non_decodable_error_wt = non_decodable_error.count(1)
             
         # testing: Ensure that ciphertext cannot be decoded, i.e. ensure that wt(error) is too high
-        if _DetermineInput(message, self.q) != 'bin':
-            raise ValueError('testing is not going to work')
+        if self.simulation == True:
+            message_type = _DetermineInput(message, self.q)
+            
+            if message_type == 'bin':
+                pass
+            elif message_type == 'int':
+                message = _IntToBitString(message, self.q)
+            elif message_type == 'pol':
+                message = _PolToInt(message, self.q)
+                message = _IntToBitString(message, self.q)
+            else:
+                raise ValueError('Unrecognized message type')
         
-        v_testing = _PolToInt(v, self.q)
-        v_testing = _IntToBitString(v_testing, self.q)
         
-        v_decoded = self.C.Decoding(v_testing, out = 'bin')
+            v_non_decodable = _PolToInt(v, self.q)
+            v_non_decodable = _IntToBitString(v_non_decodable, self.q)
         
-        if v_decoded == message: # hopefully v_decoded and message are NOT equal
-            self.num_ct_decoding_success = 1
+            v_decoded = self.C.Decoding(v_non_decodable, out = 'bin')
+            
+            rem = len(message) % self.k
+            if rem > 0:
+                message_zeropad = message + '0' * (self.k - rem)
+            else:
+                message_zeropad = message
+        
+            if v_decoded == message_zeropad: # hopefully v_decoded_zeropad and message_zeropad are NOT equal
+                self.ct_decoding_success = 1
     
         # convert ciphertext if necessary
         if out == 'pol':
@@ -257,15 +273,23 @@ class HQC:
         return array
 
 
-# In[ ]:
+# In[2]:
 
 
 #C = HQC(w = 5, w_e = 5, w_r = 5, C = ProductCode(BCHCode(n = 15, b = 1, D = 7), RepetitionCode(n = 31)), key_type = 'bin')
-#C = HQC(w = 7, w_e = 5, w_r = 5, C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8)), key_type = 'int')
+#C = HQC(w = 3, w_e = 3, w_r = 3, C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8)), key_type = 'int', simulation = True)
 #C = HQC(w = 10, w_e = 10, w_r = 10, C = ProductCode(RMCode(r = 1, m = 7), RMCode(r = 1, m = 7)), key_type = 'int')
-
+#C = HQC(w = 2, w_e = 2, w_r = 2, C = ConcatenatedCode(RSCode(50, 7, 2**8), RMCode(r = 1, m = 7, q = 2)), key_type = 'int', simulation = True)
 
 #print('Public key: ', C.pk)
 #print('\nSecret key: ', C.sk)
 #C.k_random
+
+
+# In[3]:
+
+
+#m = '101010101010101010101010101010101010101010101010101010101'
+#c = C.Encrypt(m, out = 'bin')
+#C.ct_decoding_success
 

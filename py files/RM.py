@@ -5,21 +5,24 @@
 
 # In[4]:
 
-from sage.all import *
-from Conversions import *
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
+from sage.all import *
+from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
 
 import numpy as np
 import itertools
 
 class RMCode:
     
-    def __init__(self, r, m):
+    def __init__(self, r, m, q):
+        
+        if q != 2:
+            raise ValueError('works only in binary case')
             
         self.r = r
         self.m = m
-        self.q = 2
+        self.q = q
         
         self.n = 2**self.m
         self.k = sum(binomial(self.m,i) for i in range(self.r + 1))
@@ -80,8 +83,10 @@ class RMCode:
         for i in range(0, len(message), self.k):
             c.extend(self.EncodeChunk(message[i:i+self.k]))
             
+        # convert c to 'pol'
         c = vector(self.F, c)
         
+        # convert c if necessary
         if out == 'pol':
             return c
         elif out == 'int':
@@ -95,11 +100,9 @@ class RMCode:
             raise ValueError('Unrecognized output')
         
             
-    def EncodeChunk(self, chunk):
-        
-        #chunk = list(chunk)
-        
+    def EncodeChunk(self, chunk): 
         # Encode a chunk of size k
+        
         if len(chunk) != self.k:
             raise ValueError('Invalid chunk size')
             
@@ -117,6 +120,7 @@ class RMCode:
         
         data_type = _DetermineInput(received, self.q)
         
+        # convert received if necessary
         if data_type == 'pol':
             pass
         elif data_type == 'int':
@@ -136,8 +140,10 @@ class RMCode:
         for i in range(0,len(received),self.n):
             d.extend(self.DecodeChunk(received[i:i+self.n]))
             
+        # convert d to pol
         d = vector(self.F, d)
             
+        # convert d if necessary
         if out == 'pol':
             return d
         elif out == 'int':
@@ -194,7 +200,7 @@ class RMCode:
             
             r -= 1
                 
-        # decode the first coefficient
+        # decode the final (i.e. the first in the list because of reverse decoding) coefficient
         decoded = self.MajorityDecoding(word.list()) + decoded
         
         return vector(self.F, decoded)
@@ -231,7 +237,7 @@ class RMCode:
 # In[10]:
 
 
-#C = RMCode(r =2, m = 8)
+#C = RMCode(r =2, m = 8, q = 2)
 #C.d
 
 

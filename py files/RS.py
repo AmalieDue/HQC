@@ -3,29 +3,34 @@
 
 # ## Reed-Solomon code
 
-# In[1]:
+# In[207]:
 
-from sage.all import *
-from Conversions import *
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
+from sage.all import *
+from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
 
 class RSCode:
     
-    def __init__(self, n, k, q, alpha = None):
+    def __init__(self, n, k, q, alpha = None, shortening = 0):
         
-        if not (k < n and n <= q):
+        if not (k < n and n < q):
             raise ValueError('Invalid values for n, k, and q.')
             
         self.p0, self.power = is_prime_power(q, get_data = True)
-            
-        self.n = n
-        self.k = k
+        
+        self.d = n - k + 1
+        
+        self.tau = floor( (self.d-1) / 2 )
+        
+        if shortening.parent() == ZZ:    
+            self.n = n - shortening
+            self.k = k - shortening
+        else:
+            raise ValueError('The shortening input must be an integer')
+        
+        self.shortening = shortening
         self.q = q
-        
-        self.d = self.n - self.k + 1
-        
-        self.tau = floor((self.n-self.k)/2)
         
         # Initializing field
         self.F = GF(self.q)
@@ -34,12 +39,15 @@ class RSCode:
         
         # Constructing alpha-vector
         if not alpha:
-            self.alpha = vector([self.p**i for i in range(self.n)])
+            self.alpha = vector([self.p**i for i in range(self.n + shortening)])
         else:
             self.alpha = alpha
         
         # Constructing generator matrix
-        self.G = matrix(self.F, k, n, lambda i,j : self.alpha[j]**i)
+        self.G = matrix(self.F, self.k + shortening, self.n + shortening, lambda i,j : self.alpha[j]**i)
+        self.G = self.G[shortening:, shortening:]
+        self.alpha = self.alpha[shortening:]
+        
         
     def Encoding(self, m, zeropad = True, out = 'bin', product_k = None):
         
@@ -51,6 +59,7 @@ class RSCode:
         # determine data type
         data_type = _DetermineInput(m, self.q)
         
+        # convert m if necessary
         if data_type == 'int':
             m = _IntToPol(m, self.q)
         elif data_type == 'pol':
@@ -76,7 +85,8 @@ class RSCode:
         # Encoding each chunk of size k
         for i in range(0, len(m), self.k):
             c.extend(self.EncodeChunk(m[i:i+self.k]))
-            
+         
+        # convert c to 'pol'
         c = vector(self.F, c)
         
         # Outputting decoded message in provided format
@@ -91,13 +101,14 @@ class RSCode:
             raise ValueError('Error with output')
         
             
-    def EncodeChunk(self, chunk):
-        
+    def EncodeChunk(self, chunk): 
         # Encode a chunk of size k
+        
         if len(chunk) != self.k:
             raise ValueError('Invalid chunk size')
             
         c = vector(self.F, chunk) * self.G
+        
         return c
     
     
@@ -111,6 +122,7 @@ class RSCode:
         # Determining input data type
         data_type = _DetermineInput(r, self.q)
 
+        # convert r if necessary
         if data_type == 'bin':
             r = _BitStringToInt(r, self.q)
             r = _IntToPol(r, self.q)
@@ -149,6 +161,7 @@ class RSCode:
         if len(chunk) != self.n:
             raise ValueError('Invalid chunk size')
             
+        
         # Constructing matrices
         M1 = matrix(self.F, self.n, self.tau + self.k, lambda i,j : self.alpha[i]**j)
         M2 = matrix(self.F, self.n, self.tau + 1, lambda i,j : chunk[i] * self.alpha[i]**j)
@@ -172,28 +185,29 @@ class RSCode:
 
         if r != 0:
             #print('Non-zero remainder (possibly >tau errors). Returning None')
-            #return(None)
             return chunk[:self.k]
 
         out = []
 
         out.extend((-q).list())
+        out = out[self.shortening:]
         out.extend([self.F(0)]*(self.k-len(out)))
 
         return out
 
 
-# In[4]:
+# In[208]:
 
 
-#C = RSCode(9, 5, 2**4)
+#C = RSCode(100, 7, 2**8, shortening = 2)
+#C.tau
 
 
-# In[1]:
+# In[209]:
 
 
 #m = [1,0,1,0,1,0,1,1]
-#m = [1,2,3,4,5,6,7]
+#m = [1,2,3,4,5,6,7,8,9]
 #m = '0001001000110100010101100111'
 #m = _IntToPol(m)
 #m = [1, z4, z4 + 1, z4^2, z4^2 + 1, z4^2 + z4, z4^2 + z4 + 1, 0]
@@ -203,39 +217,12 @@ class RSCode:
 #c = C.Encoding(m, out = 'pol')
 #c = C.Encoding(m, out = 'int')
 #c = C.Encoding(m, out = 'bin')
-#print('codeword: ', c)
+#print('codeword: ', len(c))
 
 #d = C.Decoding(c, out = 'pol')
 #d = C.Decoding(c, out = 'int')
 #d = C.Decoding(c, out = 'bin')
 #print('decoded word: ', d)
-
-
-# In[4]:
-
-
-#m = []
-#for i in range(C.k):
-#    m.append(ZZ.random_element(0,C.q))
-    
-#print(m)
-#delta = floor((C.d - 1)/2)
-#print('delta = ', delta)
-    
-#c = C.Encoding(m)
-
-#positions = []
-#for i in range(delta): # add delta errors
-#    position = ZZ.random_element(0,C.n)
-#    while position in positions:
-#        position = ZZ.random_element(0,C.n)  
-      
-#    positions.append(position)
-#    c[position] = C.F(c[position] - 1) # flip the bit
-
-#d = C.Decoding(c)
-
-#print('Decoding status: ', d == m)
 
 
 # In[ ]:

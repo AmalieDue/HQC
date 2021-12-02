@@ -4,6 +4,6 @@
 #BSUB -R "rusage[mem=2GB]"
 #BSUB -R "span[hosts=1]"
 #BSUB -R "select[avx2]"
-#BSUB -W 1:00
+#BSUB -W 2:00
 
-/appl/SageMath/9.4/sage test_script.py
+/appl/SageMath/9.4/sage simulation.py

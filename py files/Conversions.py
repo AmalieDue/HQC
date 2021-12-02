@@ -7,7 +7,6 @@
 
 from sage.all import *
 
-
 def _DetermineInput(data, q):
     # determine data type
     F = GF(q)
