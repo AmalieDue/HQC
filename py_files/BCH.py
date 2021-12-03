@@ -26,7 +26,7 @@ class BCHCode:
         self.D = D
         self.d = D
         
-        if shortening.parent() == ZZ:
+        if type(shortening) == int:
             self.n = n - shortening
         else:
             raise ValueError('The shortening input must be an integer')
