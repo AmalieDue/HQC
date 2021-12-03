@@ -3,7 +3,7 @@
 
 # ## BCH Code
 
-# In[3]:
+# In[ ]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -200,38 +200,20 @@ class BCHCode:
         if (len(chunk) != self.n):
             raise ValueError('Invalid input size')
         
-        #print('first', chunk)
         
         # Need to convert to extension field
         chunk = vector(self.EF, chunk)
-        print(chunk)
-        
-        #print('second', chunk)
           
         # Decode with RS decoder
         chunk = self.C_RS.DecodeChunk(chunk)
-        print(chunk)
         
         chunk = self.C_RS.EncodeChunk(chunk)
         
-        #print('third', chunk)
-        
-        # Need to convert to base field
-        #print(chunk[0].parent())
-        #print(chunk)
-        
-        #if chunk[0] == 1 or chunk[0] == 0:
-        #    print('hi')
-        
         for i in range(len(chunk)):
-            #print(chunk[i])
             if (chunk[i] != self.F(0) and chunk[i] != self.F(1)):
-                #print('hi')
                 return vector(self.F, [0] * self.k)
             
         chunk = chunk.Mod(self.q) 
-        
-        #print('fourth', chunk)
         
         cols = self.G.pivots()
         G_independent = self.G.matrix_from_columns(cols)
@@ -244,19 +226,17 @@ class BCHCode:
         
         chunk_independent = [chunk[i] for i in cols]
         
-        #print('here', chunk_independent)
-        
         return vector(self.F, chunk_independent) * G_independent.inverse()
 
 
-# In[4]:
+# In[ ]:
 
 
 #C = BCHCode(n = 31, b=1, D = 10, q = 2) 
 #C.G
 
 
-# In[6]:
+# In[ ]:
 
 
 #m = '10101010111'
