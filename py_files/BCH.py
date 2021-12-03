@@ -3,7 +3,7 @@
 
 # ## BCH Code
 
-# In[ ]:
+# In[3]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -19,7 +19,7 @@ class BCHCode:
         if q != 2:
             raise ValueError('works only in binary case')
             
-        #self.n = n
+        
         self.m = Mod(q,n).multiplicative_order()
         self.q = q
         self.b = b
@@ -41,9 +41,10 @@ class BCHCode:
         # Initialize field
         self.F = GF(self.q) # base field
         self.EF = GF(self.q**self.m) # extension field
-        R.<x> = PolynomialRing(self.F, 'x')
-        self.R = R
-        self.x = x
+        #R.<x> = PolynomialRing(self.F, 'x')
+        self.R = PolynomialRing(self.F, 'x')
+        #self.R = R
+        self.x = self.R.gen()
         self.alpha = self.EF.primitive_element()
         
         # Constructing generator matrix
@@ -125,10 +126,8 @@ class BCHCode:
         for i in range(0, len(message), self.k):
             c.extend(self.EncodeChunk(message[i:i+self.k]))
         
-        # convert c to 'pol'
         c = vector(self.F, c)
         
-        # convert c if necessary
         if out == 'pol':
             return c
         elif out == 'int':
@@ -142,9 +141,9 @@ class BCHCode:
             raise ValueError('Unrecognized output')
             
             
-    def EncodeChunk(self, chunk):   
-        # Encode a chunk of size k
+    def EncodeChunk(self, chunk):
         
+        # Encode a chunk of size k
         if len(chunk) != self.k:
             raise ValueError('Invalid chunk size')
             
@@ -181,10 +180,8 @@ class BCHCode:
         for i in range(0,len(received),self.n):
             d.extend(self.DecodeChunk(received[i:i+self.n]))
             
-        # convert d to 'pol'
         d = vector(self.F, d)
             
-        # convert d if necessary
         if out == 'pol':
             return d
         elif out == 'int':
@@ -202,22 +199,39 @@ class BCHCode:
         
         if (len(chunk) != self.n):
             raise ValueError('Invalid input size')
-    
+        
+        #print('first', chunk)
         
         # Need to convert to extension field
         chunk = vector(self.EF, chunk)
+        print(chunk)
         
+        #print('second', chunk)
           
         # Decode with RS decoder
         chunk = self.C_RS.DecodeChunk(chunk)
+        print(chunk)
         
         chunk = self.C_RS.EncodeChunk(chunk)
         
+        #print('third', chunk)
+        
+        # Need to convert to base field
+        #print(chunk[0].parent())
+        #print(chunk)
+        
+        #if chunk[0] == 1 or chunk[0] == 0:
+        #    print('hi')
+        
         for i in range(len(chunk)):
+            #print(chunk[i])
             if (chunk[i] != self.F(0) and chunk[i] != self.F(1)):
+                #print('hi')
                 return vector(self.F, [0] * self.k)
             
         chunk = chunk.Mod(self.q) 
+        
+        #print('fourth', chunk)
         
         cols = self.G.pivots()
         G_independent = self.G.matrix_from_columns(cols)
@@ -230,20 +244,22 @@ class BCHCode:
         
         chunk_independent = [chunk[i] for i in cols]
         
+        #print('here', chunk_independent)
+        
         return vector(self.F, chunk_independent) * G_independent.inverse()
 
 
-# In[ ]:
+# In[4]:
 
 
-#C = BCHCode(n = 63, b=1, D = 28, q = 2) 
-#C.k
+#C = BCHCode(n = 31, b=1, D = 10, q = 2) 
+#C.G
 
 
-# In[ ]:
+# In[6]:
 
 
-#m = '101010111110'
+#m = '10101010111'
 #m = vector(GF(2), [1,1,0,0,1,1,0,0,1,1])
 #m = [1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1]
 #m = ''
