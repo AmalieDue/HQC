@@ -54,8 +54,11 @@ class HQC:
         
         # h is generated as a random element with random degree. Should there be a lower bound on the degree,
         # as we want the weight of h to be "big enough"?
-        h = self.R.random_element(degree = (0, self.n))
+        w_h = ZZ.random_element(0,self.n)
+        h = [0] * self.n
+        h = self.RandomGenWithWeight(h, w_h)
         h = self.S(h)
+        #h = self.R.random_element(degree = (0, self.n))
         
         # x and y are randomly generated with wt(x) = wt(y) = self.w
         x = [0] * self.n
