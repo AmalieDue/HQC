@@ -10,15 +10,15 @@ import time
 from sage.all import *
 from HQC import *
 
-w = 51
-trials = 1000
+w = 77
+trials = 500
 
 current_time = time.strftime("%m.%d.%y %H:%M:%S", time.localtime())
-output_name = 'output_files/RSBCH1_w=%s/concat RSBCH1 w=%s %s.pkl' % (w, w, current_time)
+output_name = 'output_files/SBCHRep1_w=%s/product SBCHRep1 w=%s %s.pkl' % (w, w, current_time)
 
 # concat_RS_RM_1 = ConcatenatedCode(RSCode(n = 138, k = 16, q = 2**8), RMCode(r = 1, m = 7, q = 2))
 # concat_RS_BCH_1 = ConcatenatedCode(RSCode(n = 139, k = 16, q = 2**8), BCHCode(n = 127, b = 1, D = 61, q = 2))
-
+# product_SBCH_Rep_1 = ProductCode(BCHCode(n = 1023, b = 1, D = 115, q = 2, shortening = 257), RepetitionCode(n = 31, q = 2))
 
 num_success = 0
 minimum_decodable_error = 139 * 127
@@ -29,7 +29,7 @@ num_ct_decoding_success = 0
 
 
 for i in range(trials):
-    C = HQC(w = w , w_e = w , w_r = w, C = ConcatenatedCode(RSCode(n = 139, k = 16, q = 2**8), BCHCode(n = 127, b = 1, D = 61, q = 2)), key_type = 'pol', simulation = True)
+    C = HQC(w = w , w_e = w , w_r = w, C = ProductCode(BCHCode(n = 1023, b = 1, D = 115, q = 2, shortening = 257), RepetitionCode(n = 31, q = 2)), key_type = 'pol', simulation = True)
     m = ''
     for i in range(C.k):
         e = ZZ.random_element(0,2)

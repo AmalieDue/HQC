@@ -3,7 +3,7 @@
 
 # ## BCH Code
 
-# In[ ]:
+# In[374]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -19,31 +19,28 @@ class BCHCode:
         if q != 2:
             raise ValueError('works only in binary case')
             
-        
         self.m = Mod(q,n).multiplicative_order()
         self.q = q
         self.b = b
         self.D = D
         self.d = D
+        self.n = n
         
         if type(shortening) == int:
-            self.n = n - shortening
+            self.shortening = shortening
         else:
             raise ValueError('The shortening input must be an integer')
-            
-            
-        self.C_RS = RSCode(self.n, self.n - self.D + 1, self.q**self.m)
-            
+        
+        
         if (self.n != self.q**self.m - 1):
             raise ValueError('Invalid input values: n != q^m - 1')
-    
+        
+        self.C_RS = RSCode(self.n, self.n - self.D + 1, self.q**self.m)
         
         # Initialize field
         self.F = GF(self.q) # base field
         self.EF = GF(self.q**self.m) # extension field
-        #R.<x> = PolynomialRing(self.F, 'x')
         self.R = PolynomialRing(self.F, 'x')
-        #self.R = R
         self.x = self.R.gen()
         self.alpha = self.EF.primitive_element()
         
@@ -52,16 +49,16 @@ class BCHCode:
         
         self.generator_poly = self.BCH_generator_polynomial(self.x, self.alpha, self.D, self.cosets)
         
-        if not (self.generator_poly.divides(self.x**self.n - 1)):
+        if not (self.generator_poly.divides(self.x**(self.n) - 1)):
             raise ValueError('generator_poly is not a generator polynomial')
             
+        
         self.k = self.n - self.generator_poly.degree()
         
-        self.G = matrix(self.F, self.k, self.n, lambda i,j : self.generator_poly[(j+(self.n-i)) % self.n])
-        #self.G = self.G.echelon_form()
-        #self.G = self.G[1:, 1:]
-        #self.n = self.n - 1
-        #self.k = self.k - 1
+        self.G = matrix(self.F, self.k, self.n, lambda i,j : self.generator_poly[(j+((self.n)-i)) % (self.n)])
+        self.G = self.G.echelon_form()
+        self.n = self.n - self.shortening
+        self.k = self.k - self.shortening
         
         
     def cyclotomic_cosets(self, n, q, b, D):
@@ -95,9 +92,9 @@ class BCHCode:
     def Encoding(self, message, zeropad = True, out = 'bin', product_k = None):
         
         if not product_k:
-            product_k = self.k
+            product_k = self.k + self.shortening
         else:
-            product_k = product_k
+            product_k = (product_k // self.k) * (self.k + self.shortening)
         
         data_type = _DetermineInput(message, self.q)
         
@@ -111,20 +108,24 @@ class BCHCode:
             raise ValueError('Wrong data type')
             
         
-        rem = len(message) % product_k
+        rem = len(message) % self.k
         
         if rem != 0:
             if zeropad:
-                message.extend([self.F(0)]*(product_k-rem))
+                message.extend([self.F(0)]*(self.k-rem))
             else:
                 raise ValueError('k does not divide input size')      
-                
+        
+        message_padded = []
+        for i in range(0, len(message), self.k):
+            message_padded.extend([self.F(0)]*self.shortening + message[i:i+self.k])
 
         c = []
         
         # Encoding each chunk of size k
-        for i in range(0, len(message), self.k):
-            c.extend(self.EncodeChunk(message[i:i+self.k]))
+        for i in range(0, len(message_padded), self.k + self.shortening):
+            encoded_chunk = self.EncodeChunk(message_padded[i:i+self.k+self.shortening]) 
+            c.extend(encoded_chunk[self.shortening:])
         
         c = vector(self.F, c)
         
@@ -144,7 +145,7 @@ class BCHCode:
     def EncodeChunk(self, chunk):
         
         # Encode a chunk of size k
-        if len(chunk) != self.k:
+        if len(chunk) != (self.k + self.shortening):
             raise ValueError('Invalid chunk size')
             
         c = vector(self.F, chunk) * self.G
@@ -155,9 +156,9 @@ class BCHCode:
     def Decoding(self, received, out = 'bin', product_n = None):
         
         if not product_n:
-            product_n = self.n
+            product_n = self.n + self.shortening
         else:
-            product_n = product_n
+            product_n = (product_n // self.n) * (self.n + self.shortening)
         
         data_type = _DetermineInput(received, self.q)
         
@@ -171,14 +172,20 @@ class BCHCode:
         else:
             raise ValueError('Wrong data type')
         
+        
+        received_padded = []
+        for i in range(0, len(received), self.n):
+            received_padded.extend([self.F(0)]*self.shortening + received[i:i+self.n].list())
+        
         # Check input size
-        if len(received) % product_n != 0:
+        if len(received_padded) % product_n != 0:
             raise ValueError('Invalid input size')
             
         d = []
         
-        for i in range(0,len(received),self.n):
-            d.extend(self.DecodeChunk(received[i:i+self.n]))
+        for i in range(0,len(received_padded),self.n+self.shortening):
+            decoded_chunk = self.DecodeChunk(received_padded[i:i+self.n+self.shortening]) 
+            d.extend(decoded_chunk[self.shortening:])
             
         d = vector(self.F, d)
             
@@ -197,7 +204,7 @@ class BCHCode:
     
     def DecodeChunk(self, chunk):
         
-        if (len(chunk) != self.n):
+        if (len(chunk) != (self.n + self.shortening)):
             raise ValueError('Invalid input size')
         
         
@@ -211,7 +218,7 @@ class BCHCode:
         
         for i in range(len(chunk)):
             if (chunk[i] != self.F(0) and chunk[i] != self.F(1)):
-                return vector(self.F, [0] * self.k)
+                return vector(self.F, [0] * (self.k+self.shortening))
             
         chunk = chunk.Mod(self.q) 
         
@@ -229,17 +236,17 @@ class BCHCode:
         return vector(self.F, chunk_independent) * G_independent.inverse()
 
 
-# In[ ]:
+# In[375]:
 
 
-#C = BCHCode(n = 31, b=1, D = 10, q = 2) 
-#C.G
+#C = BCHCode(n = 1023, b=1, D = 115, q = 2, shortening = 257) 
+#C.k
 
 
-# In[ ]:
+# In[376]:
 
 
-#m = '10101010111'
+#m = '00110011001100110110110111001000110101010101111'
 #m = vector(GF(2), [1,1,0,0,1,1,0,0,1,1])
 #m = [1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1]
 #m = ''
@@ -250,9 +257,9 @@ class BCHCode:
 #print(m)
 
 #c = C.Encoding(m, out = 'pol')
+#c = C.Encoding(m, out = 'bin')
 #c = C.Encoding(m, out = 'int')
-#c = C.Encoding(m, out = 'int')
-#print('codeword: ', len(c))
+#print('codeword: ', c)
 
 #positions = []
 #for i in range(31): # add delta errors
@@ -276,4 +283,10 @@ class BCHCode:
 #print('decoded word: ', d)
 #print('Decoding status: ', d == m)
 #print(d)
+
+
+# In[ ]:
+
+
+
 

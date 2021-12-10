@@ -3,7 +3,7 @@
 
 # ## HQC
 
-# In[1]:
+# In[5]:
 
 
 #get_ipython().run_line_magic('run', 'ProductCode.ipynb')
@@ -12,7 +12,7 @@
 from sage.all import *
 from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
 from ConcatenatedCode import *
-#from ProductCode import *
+from ProductCode import *
 
 class HQC:
     
@@ -54,11 +54,12 @@ class HQC:
         
         # h is generated as a random element with random degree. Should there be a lower bound on the degree,
         # as we want the weight of h to be "big enough"?
+        #h = self.R.random_element(degree = (0, self.n)) # SHOULD NOT BE DEGREE!
         w_h = ZZ.random_element(0,self.n)
         h = [0] * self.n
         h = self.RandomGenWithWeight(h, w_h)
         h = self.S(h)
-        #h = self.R.random_element(degree = (0, self.n))
+        
         
         # x and y are randomly generated with wt(x) = wt(y) = self.w
         x = [0] * self.n
@@ -289,10 +290,17 @@ class HQC:
 #C.k_random
 
 
-# In[3]:
+# In[4]:
 
 
 #m = '101010101010101010101010101010101010101010101010101010101'
 #c = C.Encrypt(m, out = 'bin')
 #C.ct_decoding_success
+#ZZ.random_element(0,17664)  
+
+
+# In[ ]:
+
+
+
 
