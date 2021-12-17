@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -152,13 +152,13 @@ class RepetitionCode:
             return "decoding failure"
 
 
-# In[2]:
+# In[ ]:
 
 
 #C = RepetitionCode(5, 2)
 
 
-# In[3]:
+# In[ ]:
 
 
 #m = vector(GF(2), [1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1])
@@ -174,4 +174,10 @@ class RepetitionCode:
 #d = C.Decoding(c, out = 'int')
 #d = C.Decoding(c, out = 'bin')
 #print('decoded word: ', d)
+
+
+# In[ ]:
+
+
+
 

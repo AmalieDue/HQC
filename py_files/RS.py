@@ -3,7 +3,7 @@
 
 # ## Reed-Solomon code
 
-# In[58]:
+# In[ ]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -23,7 +23,7 @@ class RSCode:
         
         self.tau = floor( (self.d-1) / 2 )
         
-        if shortening.parent() == ZZ:    
+        if type(shortening) == int:    
             self.n = n - shortening
             self.k = k - shortening
         else:
@@ -198,14 +198,14 @@ class RSCode:
         return out
 
 
-# In[61]:
+# In[ ]:
 
 
 #C = RSCode(10, 5, 2**4, shortening = 1)
 #C.k
 
 
-# In[60]:
+# In[ ]:
 
 
 #m = [1,0,1,0,1,0,1,1]

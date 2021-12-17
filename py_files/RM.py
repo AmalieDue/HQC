@@ -3,7 +3,7 @@
 
 # ## Reed-Muller Code:
 
-# In[4]:
+# In[ ]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -234,19 +234,19 @@ class RMCode:
             return "decoding failure"
 
 
-# In[10]:
+# In[ ]:
 
 
-#C = RMCode(r =2, m = 8, q = 2)
-#C.d
+#C = RMCode(r =2, m = 4, q = 2)
+#C.k
 
 
-# In[11]:
+# In[ ]:
 
 
 #m = vector(GF(2), [1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0])
 #m = [1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1]
-#m = '11001100110011001'
+#m = '110011001'
 
 #c = C.Encoding(m, out = 'pol')
 #c = C.Encoding(m, out = 'int')

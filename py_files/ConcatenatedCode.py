@@ -6,11 +6,10 @@
 
 #get_ipython().run_line_magic('run', 'RS.ipynb')
 #get_ipython().run_line_magic('run', 'RM.ipynb')
-#%run BCH.ipynb
+#get_ipython().run_line_magic('run', 'BCH.ipynb')
 from sage.all import *
 from RS import *
 from RM import * 
-from BCH import *
 
 class ConcatenatedCode:
     

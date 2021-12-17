@@ -11,8 +11,8 @@
 #get_ipython().run_line_magic('run', 'BCH.ipynb')
 #get_ipython().run_line_magic('run', 'Repetition.ipynb')
 from sage.all import *
-#from RS import *
-#from RM import *
+from RS import *
+from RM import *
 from BCH import *
 from Repetition import *
 
@@ -67,7 +67,7 @@ class ProductCode:
         return d_total
 
 
-# In[87]:
+# In[90]:
 
 
 #C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8))
@@ -76,9 +76,10 @@ class ProductCode:
 #C = ProductCode(RMCode(r = 2, m = 8, q = 2), RMCode(r = 1, m = 6, q = 2))
 #C = ProductCode(BCHCode(n = 1023, b = 1, D = 115, q = 2, shortening = 257), RepetitionCode(n = 31, q = 2))
 #C.k
+#C = ProductCode(BCHCode(n = 15, b = 1, D = 7, q = 2), RepetitionCode(n = 5, q = 2))
 
 
-# In[89]:
+# In[92]:
 
 
 #m = '101011'
@@ -92,7 +93,13 @@ class ProductCode:
 #m = [1,2,3,4,5,6,7]
 #c = C.Encoding(m, out = 'bin')
 #print(4*9*7)
-#print("Codeword: ", len(c))
+#print("Codeword: ", c)
 #d = C.Decoding(c, out = 'bin')
 #print(d)
+
+
+# In[ ]:
+
+
+
 

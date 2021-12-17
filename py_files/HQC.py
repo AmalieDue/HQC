@@ -3,7 +3,7 @@
 
 # ## HQC
 
-# In[5]:
+# In[ ]:
 
 
 #get_ipython().run_line_magic('run', 'ProductCode.ipynb')
@@ -16,7 +16,7 @@ from ProductCode import *
 
 class HQC:
     
-    def __init__(self, w, w_e, w_r, C, key_type = 'pol', simulation = False, simulate_k = False):
+    def __init__(self, w, w_e, w_r, C, key_type = 'pol', simulation = False, single_code = False):
         
         self.w = w
         self.w_e = w_e
@@ -25,20 +25,38 @@ class HQC:
         self.q = 2
         self.ct_decoding_success = 0
         self.simulation = simulation
-        self.simulate_k = simulate_k
+        self.low_h_wt = 0
         
+        
+        if single_code == True:
+            if C.q == 2:
+                self.n = self.C.n
+                self.k = self.C.k
+            else:
+                self.n = self.C.n * self.C.power
+                self.k = self.C.k * self.C.power
         # if neither input nor output to code C are binary, then self.n and self.k are multiplied with the
         # power of the extension field size
-        if (self.C.C1.q == self.C.C2.q and self.C.C1.q != self.q):
-            self.n = self.C.n * self.C.C1.power
-            self.k = self.C.k * self.C.C1.power
         else:
-            self.n = self.C.n
-            self.k = self.C.k
-                    
-        # initialize field and quotient ring
+            if (self.C.C1.q == self.C.C2.q and self.C.C1.q != self.q):
+                self.n = self.C.n * self.C.C1.power
+                self.k = self.C.k * self.C.C1.power
+            else:
+                self.n = self.C.n
+                self.k = self.C.k
+        
+        # initialize field
         self.F = GF(self.q)
         self.R = PolynomialRing(self.F, 'x'); x = self.R.gen()
+        
+        #self.n1n2 = self.n
+        #poly = self.R((x**self.n - 1) / (x - 1))
+        #while (poly.is_irreducible() == False):
+        #    self.n = self.n + 1
+        #    poly = self.R((x**self.n - 1) / (x - 1))
+        
+                    
+        # initialize quotient ring
         self.S = QuotientRing(self.R, x**self.n - 1, 'a'); a = self.S.gen()
         
         # generate public key and private key. The key data type is 'key_type', default is 'pol'.
@@ -55,11 +73,10 @@ class HQC:
         # h is generated as a random element with random degree. Should there be a lower bound on the degree,
         # as we want the weight of h to be "big enough"?
         #h = self.R.random_element(degree = (0, self.n)) # SHOULD NOT BE DEGREE!
-        w_h = ZZ.random_element(0,self.n)
+        self.w_h = ZZ.random_element(0,self.n)
         h = [0] * self.n
-        h = self.RandomGenWithWeight(h, w_h)
+        h = self.RandomGenWithWeight(h, self.w_h)
         h = self.S(h)
-        
         
         # x and y are randomly generated with wt(x) = wt(y) = self.w
         x = [0] * self.n
@@ -72,19 +89,6 @@ class HQC:
         
         # compute syndrome
         s = x + h * y
-        
-        if self.simulate_k == True:
-            # left part of parity check matrix, i.e. identity matrix
-            H_left = matrix.identity(self.n)
-
-            # right part of parity check matrix, i.e. rotation matrix of random h
-            H_right = matrix(self.F, self.n, self.n, lambda i,j : h[(i - j) % self.n])
-
-            # full parity check matrix
-            H = block_matrix(1, 2, [H_left, H_left])
-
-            self.k_random = 2 * self.n - rank(H)
-            
         
         # convert keys if necessary
         if out == 'pol':
@@ -131,7 +135,7 @@ class HQC:
         c = self.C.Encoding(message, out = 'bin')
         # convert c to list of integers (1's and 0's) since list representation is necessary
         c = _BitStringToInt(c, self.q)
-        
+
         u = []
         v = []
         
@@ -194,6 +198,7 @@ class HQC:
         
             if v_decoded == message_zeropad: # hopefully v_decoded_zeropad and message_zeropad are NOT equal
                 self.ct_decoding_success = 1
+                self.low_h_wt = self.h_w
     
         # convert ciphertext if necessary
         if out == 'pol':
@@ -277,24 +282,29 @@ class HQC:
         return array
 
 
-# In[2]:
+# In[ ]:
 
 
-#C = HQC(w = 5, w_e = 5, w_r = 5, C = ProductCode(BCHCode(n = 15, b = 1, D = 7), RepetitionCode(n = 31)), key_type = 'bin')
+#C = HQC(w = 50, w_e = 50, w_r = 50, C = ProductCode(BCHCode(n = 511, b = 1, D = 115, q = 2, shortening = 0), RepetitionCode(n = 31, q = 2)), key_type = 'pol', simulation = True)
 #C = HQC(w = 3, w_e = 3, w_r = 3, C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8)), key_type = 'int', simulation = True)
-#C = HQC(w = 10, w_e = 10, w_r = 10, C = ProductCode(RMCode(r = 1, m = 7), RMCode(r = 1, m = 7)), key_type = 'int')
+#C = HQC(w = 10, w_e = 10, w_r = 10, C = ProductCode(RMCode(r = 1, m = 7, q=2), RMCode(r = 1, m = 7, q=2)), key_type = 'int')
 #C = HQC(w = 2, w_e = 2, w_r = 2, C = ConcatenatedCode(RSCode(50, 7, 2**8), RMCode(r = 1, m = 7, q = 2)), key_type = 'int', simulation = True)
+#C = HQC(w = 56, w_e = 56, w_r = 56, C = ProductCode(RMCode(r = 2, m = 7, q = 2), RMCode(r = 2, m = 8, q = 2)), key_type = 'pol', simulation = True)
+#C = HQC(w = 20, w_e = 20, w_r = 20, C = RMCode(r = 3, m = 14, q = 2), key_type = 'pol', simulation = True, single_code = True)
 
-#print('Public key: ', C.pk)
+#print('Public key: ', len(C.pk[0]))
 #print('\nSecret key: ', C.sk)
-#C.k_random
+#print(C.n)
 
 
-# In[4]:
+# In[ ]:
 
 
 #m = '101010101010101010101010101010101010101010101010101010101'
 #c = C.Encrypt(m, out = 'bin')
+#print(c)
+#d = C.Decrypt(c, out = 'bin')
+#print(d)
 #C.ct_decoding_success
 #ZZ.random_element(0,17664)  
 

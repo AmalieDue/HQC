@@ -3,7 +3,7 @@
 
 # ## BCH Code
 
-# In[374]:
+# In[377]:
 
 
 #get_ipython().run_line_magic('run', 'Conversions.ipynb')
@@ -236,14 +236,14 @@ class BCHCode:
         return vector(self.F, chunk_independent) * G_independent.inverse()
 
 
-# In[375]:
+# In[378]:
 
 
-#C = BCHCode(n = 1023, b=1, D = 115, q = 2, shortening = 257) 
+#C = BCHCode(n = 1023, b=1, D = 115, q = 2) 
 #C.k
 
 
-# In[376]:
+# In[380]:
 
 
 #m = '00110011001100110110110111001000110101010101111'
