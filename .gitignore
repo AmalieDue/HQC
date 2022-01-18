@@ -1,0 +1,6 @@
+# folders
+.ipynb_checkpoints
+
+# files
+.DS_Store
+py_files/.DS_Store
