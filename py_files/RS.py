@@ -6,9 +6,9 @@
 # In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'Conversions.ipynb')
-from sage.all import *
-from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
+get_ipython().run_line_magic('run', 'Conversions.ipynb')
+#from sage.all import *
+#from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
 
 class RSCode:
     
@@ -23,7 +23,7 @@ class RSCode:
         
         self.tau = floor( (self.d-1) / 2 )
         
-        if type(shortening) == int:    
+        if shortening.parent() == ZZ:    
             self.n = n - shortening
             self.k = k - shortening
         else:
@@ -201,15 +201,15 @@ class RSCode:
 # In[ ]:
 
 
-#C = RSCode(10, 5, 2**4, shortening = 1)
-#C.k
+#C = RSCode(9, 5, 2**4)
+#C.G
 
 
 # In[ ]:
 
 
 #m = [1,0,1,0,1,0,1,1]
-#m = [1,2,3,4,5,6,7,8,9,9]
+#m = [1,2,3,4,5,6,7]
 #m = '1010'
 #m = _IntToPol(m)
 #m = [1, z4, z4 + 1, z4^2, z4^2 + 1, z4^2 + z4, z4^2 + z4 + 1, 0]
@@ -226,4 +226,10 @@ class RSCode:
 #d = C.Decoding(c, out = 'int')
 #d = C.Decoding(c, out = 'bin')
 #print('decoded word: ', d)
+
+
+# In[ ]:
+
+
+
 

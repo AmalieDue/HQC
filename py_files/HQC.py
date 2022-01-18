@@ -6,13 +6,13 @@
 # In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'ProductCode.ipynb')
-#get_ipython().run_line_magic('run', 'ConcatenatedCode.ipynb')
-#get_ipython().run_line_magic('run', 'Conversions.ipynb')
-from sage.all import *
-from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
-from ConcatenatedCode import *
-from ProductCode import *
+get_ipython().run_line_magic('run', 'ProductCode.ipynb')
+get_ipython().run_line_magic('run', 'ConcatenatedCode.ipynb')
+get_ipython().run_line_magic('run', 'Conversions.ipynb')
+#from sage.all import *
+#from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
+#from ConcatenatedCode import *
+#from ProductCode import *
 
 class HQC:
     
@@ -49,7 +49,7 @@ class HQC:
         self.F = GF(self.q)
         self.R = PolynomialRing(self.F, 'x'); x = self.R.gen()
         
-        #self.n1n2 = self.n
+        # for computing smallest primitive prime integer greater than n1n2
         #poly = self.R((x**self.n - 1) / (x - 1))
         #while (poly.is_irreducible() == False):
         #    self.n = self.n + 1
@@ -198,7 +198,7 @@ class HQC:
         
             if v_decoded == message_zeropad: # hopefully v_decoded_zeropad and message_zeropad are NOT equal
                 self.ct_decoding_success = 1
-                self.low_h_wt = self.h_w
+                self.low_h_wt = self.w_h
     
         # convert ciphertext if necessary
         if out == 'pol':
@@ -285,14 +285,15 @@ class HQC:
 # In[ ]:
 
 
-#C = HQC(w = 50, w_e = 50, w_r = 50, C = ProductCode(BCHCode(n = 511, b = 1, D = 115, q = 2, shortening = 0), RepetitionCode(n = 31, q = 2)), key_type = 'pol', simulation = True)
+#C = HQC(w = 50, w_e = 50, w_r = 50, C = ProductCode(BCHCode(n = 2**10-1, b = 1, D = 115, q = 2, shortening = 257), RepetitionCode(n = 31, q = 2)), key_type = 'pol', simulation = True)
 #C = HQC(w = 3, w_e = 3, w_r = 3, C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8)), key_type = 'int', simulation = True)
 #C = HQC(w = 10, w_e = 10, w_r = 10, C = ProductCode(RMCode(r = 1, m = 7, q=2), RMCode(r = 1, m = 7, q=2)), key_type = 'int')
-#C = HQC(w = 2, w_e = 2, w_r = 2, C = ConcatenatedCode(RSCode(50, 7, 2**8), RMCode(r = 1, m = 7, q = 2)), key_type = 'int', simulation = True)
-#C = HQC(w = 56, w_e = 56, w_r = 56, C = ProductCode(RMCode(r = 2, m = 7, q = 2), RMCode(r = 2, m = 8, q = 2)), key_type = 'pol', simulation = True)
+#C = HQC(w = 3, w_e = 3, w_r = 3, C = ConcatenatedCode(RSCode(n=15, k=7, q=2**4), RMCode(r=1, m=3, q = 2)), key_type = 'pol', simulation = True)
+#C = HQC(w = 56, w_e = 56, w_r = 56, C = ProductCode(BCHCode(n = 2**8 - 1, b = 1, D = 31, q = 2, shortening = 116), BCHCode(n = 127, b = 1, D = 57, q = 2)), key_type = 'pol', simulation = True)
 #C = HQC(w = 20, w_e = 20, w_r = 20, C = RMCode(r = 3, m = 14, q = 2), key_type = 'pol', simulation = True, single_code = True)
 
-#print('Public key: ', len(C.pk[0]))
+
+#print('Public key: ', C.pk)
 #print('\nSecret key: ', C.sk)
 #print(C.n)
 
@@ -300,11 +301,11 @@ class HQC:
 # In[ ]:
 
 
-#m = '101010101010101010101010101010101010101010101010101010101'
+#m = '1010101010101010101010101010'
 #c = C.Encrypt(m, out = 'bin')
-#print(c)
+#print('ciphertext', c)
 #d = C.Decrypt(c, out = 'bin')
-#print(d)
+#print('plaintext', d)
 #C.ct_decoding_success
 #ZZ.random_element(0,17664)  
 

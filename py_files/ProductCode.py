@@ -3,18 +3,18 @@
 
 # ## Product Code
 
-# In[83]:
+# In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'RS.ipynb')
-#get_ipython().run_line_magic('run', 'RM.ipynb')
-#get_ipython().run_line_magic('run', 'BCH.ipynb')
-#get_ipython().run_line_magic('run', 'Repetition.ipynb')
-from sage.all import *
-from RS import *
-from RM import *
-from BCH import *
-from Repetition import *
+get_ipython().run_line_magic('run', 'RS.ipynb')
+get_ipython().run_line_magic('run', 'RM.ipynb')
+get_ipython().run_line_magic('run', 'BCH.ipynb')
+get_ipython().run_line_magic('run', 'Repetition.ipynb')
+#from sage.all import *
+#from RS import *
+#from RM import *
+#from BCH import *
+#from Repetition import *
 
 import numpy as np
 
@@ -67,24 +67,24 @@ class ProductCode:
         return d_total
 
 
-# In[90]:
+# In[ ]:
 
 
-#C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8))
+#C = ProductCode(RSCode(n=8, k=5, q=2**4), RMCode(r=1, m=3, q=2))
 #C = ProductCode(RSCode(n=127, k=8, q=2**8), RSCode(n=17, k=2, q=2**8))
 #C = ProductCode(RMCode(r = 1, m = 3, q = 2), RMCode(r = 1, m = 3, q = 2))
 #C = ProductCode(RMCode(r = 2, m = 8, q = 2), RMCode(r = 1, m = 6, q = 2))
 #C = ProductCode(BCHCode(n = 1023, b = 1, D = 115, q = 2, shortening = 257), RepetitionCode(n = 31, q = 2))
 #C.k
-#C = ProductCode(BCHCode(n = 15, b = 1, D = 7, q = 2), RepetitionCode(n = 5, q = 2))
+#C = ProductCode(BCHCode(n = 15, b = 1, D = 7, q = 2), RepetitionCode(n = 8, q = 2))
 
 
-# In[92]:
+# In[ ]:
 
 
-#m = '101011'
+#m = '11001100110011001100'
 #c = C.Encoding(m, out = 'bin')
-#print("Codeword: ", len(c))
+#print("Codeword: ", c)
 
 #m = '111011110101000111011110101000111011110101000111011110101000111011110101000111011110'
 
@@ -96,6 +96,12 @@ class ProductCode:
 #print("Codeword: ", c)
 #d = C.Decoding(c, out = 'bin')
 #print(d)
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

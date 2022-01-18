@@ -4,9 +4,9 @@
 # In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'Conversions.ipynb')
-from sage.all import *
-from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
+get_ipython().run_line_magic('run', 'Conversions.ipynb')
+#from sage.all import *
+#from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
 
 class RepetitionCode:
     

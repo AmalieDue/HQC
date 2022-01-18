@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'RS.ipynb')
-#get_ipython().run_line_magic('run', 'RM.ipynb')
-#get_ipython().run_line_magic('run', 'BCH.ipynb')
-from sage.all import *
-from RS import *
-from RM import * 
+get_ipython().run_line_magic('run', 'RS.ipynb')
+get_ipython().run_line_magic('run', 'RM.ipynb')
+get_ipython().run_line_magic('run', 'BCH.ipynb')
+#from sage.all import *
+#from RS import *
+#from RM import * 
 
 class ConcatenatedCode:
     
@@ -43,28 +43,30 @@ class ConcatenatedCode:
     def Decoding(self, r, out = 'bin'):
         
         c = self.C2.Decoding(r, out = 'bin')
+        #print(c)
         
         c = self.C1.Decoding(c, out = out)
         
         return c
 
 
-# In[7]:
+# In[ ]:
 
 
+#C = ConcatenatedCode(RSCode(n=8, k=5, q=2**4), RMCode(r=1, m=3, q=2))
 #C = ConcatenatedCode(RSCode(n=138, k=16, q=2**8), RMCode(r = 1, m = 7, q = 2))
 #C = ConcatenatedCode(RSCode(n=552, k=8, q=2**16), RMCode(r = 2, m = 5))
 #C = ConcatenatedCode(RSCode(n=139, k=16, q=2**8), BCHCode(n = 127, b = 1, D = 61))
 
 
-# In[8]:
+# In[ ]:
 
 
 #m = '10101010101011010'
-#m = [1,2,3,4,5,6,0]
+#m = [1,2,3,4,5]
 #c = C.Encoding(m, out = 'bin')
 #print(c)
-#d = C.Decoding(c, out = 'bin')
+#d = C.Decoding(c, out = 'int')
 #print(d)
 
 

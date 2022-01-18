@@ -3,14 +3,14 @@
 
 # ## BCH Code
 
-# In[377]:
+# In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'Conversions.ipynb')
-#get_ipython().run_line_magic('run', 'RS.ipynb')
-from sage.all import *
-from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
-from RS import *
+get_ipython().run_line_magic('run', 'Conversions.ipynb')
+get_ipython().run_line_magic('run', 'RS.ipynb')
+#from sage.all import *
+#from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
+#from RS import *
 
 class BCHCode:
     
@@ -26,7 +26,7 @@ class BCHCode:
         self.d = D
         self.n = n
         
-        if type(shortening) == int:
+        if shortening.parent() == ZZ:
             self.shortening = shortening
         else:
             raise ValueError('The shortening input must be an integer')
@@ -236,14 +236,14 @@ class BCHCode:
         return vector(self.F, chunk_independent) * G_independent.inverse()
 
 
-# In[378]:
+# In[ ]:
 
 
-#C = BCHCode(n = 1023, b=1, D = 115, q = 2) 
-#C.k
+#C = BCHCode(n = 2**10 - 1, b=1, D = 115, q = 2, shortening = 257) 
+#C.n
 
 
-# In[380]:
+# In[ ]:
 
 
 #m = '00110011001100110110110111001000110101010101111'
@@ -256,6 +256,7 @@ class BCHCode:
     
 #print(m)
 
+#m = '11001'
 #c = C.Encoding(m, out = 'pol')
 #c = C.Encoding(m, out = 'bin')
 #c = C.Encoding(m, out = 'int')
@@ -283,10 +284,4 @@ class BCHCode:
 #print('decoded word: ', d)
 #print('Decoding status: ', d == m)
 #print(d)
-
-
-# In[ ]:
-
-
-
 

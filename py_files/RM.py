@@ -6,9 +6,9 @@
 # In[ ]:
 
 
-#get_ipython().run_line_magic('run', 'Conversions.ipynb')
-from sage.all import *
-from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
+get_ipython().run_line_magic('run', 'Conversions.ipynb')
+#from sage.all import *
+#from Conversions import _DetermineInput, _BitStringToInt, _IntToBitString, _IntToPol, _PolToInt
 
 import numpy as np
 import itertools
@@ -237,8 +237,10 @@ class RMCode:
 # In[ ]:
 
 
-#C = RMCode(r =2, m = 4, q = 2)
-#C.k
+#C = RMCode(r =3, m = 15, q = 2)
+#print(C.n)
+#print(C.k)
+#print(C.d)
 
 
 # In[ ]:

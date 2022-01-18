@@ -3,9 +3,7 @@
 
 # ## Conversions
 
-from sage.all import *
-
-# In[19]:
+# In[ ]:
 
 
 def _DetermineInput(data, q):
