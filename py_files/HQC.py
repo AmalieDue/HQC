@@ -3,7 +3,7 @@
 
 # ## HQC
 
-# In[ ]:
+# In[15]:
 
 
 get_ipython().run_line_magic('run', 'ProductCode.ipynb')
@@ -72,10 +72,15 @@ class HQC:
         
         # h is generated as a random element with random degree. Should there be a lower bound on the degree,
         # as we want the weight of h to be "big enough"?
-        #h = self.R.random_element(degree = (0, self.n)) # SHOULD NOT BE DEGREE!
-        self.w_h = ZZ.random_element(0,self.n)
-        h = [0] * self.n
-        h = self.RandomGenWithWeight(h, self.w_h)
+        
+        # OLD WAY OF GENERATING H
+        #self.w_h = ZZ.random_element(0,self.n)
+        #h = [0] * self.n
+        #h = self.RandomGenWithWeight(h, self.w_h)
+        
+        # NEW WAY OF GENERATING H
+        h = self.Generate_h(self.n)
+        self.w_h = sum(h)
         h = self.S(h)
         
         # x and y are randomly generated with wt(x) = wt(y) = self.w
@@ -270,6 +275,13 @@ class HQC:
         return decoded
         
         
+    def Generate_h(self, length):
+        h = []
+        for i in range(length):
+            h.append(ZZ.random_element(0,2))
+            
+        return h
+    
     def RandomGenWithWeight(self, array, weight):
 
         for i in range(weight):
@@ -282,12 +294,12 @@ class HQC:
         return array
 
 
-# In[ ]:
+# In[17]:
 
 
 #C = HQC(w = 50, w_e = 50, w_r = 50, C = ProductCode(BCHCode(n = 2**10-1, b = 1, D = 115, q = 2, shortening = 257), RepetitionCode(n = 31, q = 2)), key_type = 'pol', simulation = True)
 #C = HQC(w = 3, w_e = 3, w_r = 3, C = ProductCode(RSCode(n=47, k=4, q=2**8), RSCode(n=47, k=4, q=2**8)), key_type = 'int', simulation = True)
-#C = HQC(w = 10, w_e = 10, w_r = 10, C = ProductCode(RMCode(r = 1, m = 7, q=2), RMCode(r = 1, m = 7, q=2)), key_type = 'int')
+#C = HQC(w = 2, w_e = 2, w_r = 2, C = ProductCode(RMCode(r = 1, m = 3, q=2), RMCode(r = 1, m = 3, q=2)), key_type = 'int')
 #C = HQC(w = 3, w_e = 3, w_r = 3, C = ConcatenatedCode(RSCode(n=15, k=7, q=2**4), RMCode(r=1, m=3, q = 2)), key_type = 'pol', simulation = True)
 #C = HQC(w = 56, w_e = 56, w_r = 56, C = ProductCode(BCHCode(n = 2**8 - 1, b = 1, D = 31, q = 2, shortening = 116), BCHCode(n = 127, b = 1, D = 57, q = 2)), key_type = 'pol', simulation = True)
 #C = HQC(w = 20, w_e = 20, w_r = 20, C = RMCode(r = 3, m = 14, q = 2), key_type = 'pol', simulation = True, single_code = True)
